@@ -1,0 +1,21 @@
+{
+  "name": "ToolKit - Free Online Tools",
+  "short_name": "ToolKit",
+  "description": "58 free online tools for PDF, Images, Text, and more. No uploads, everything runs in your browser.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "https://picsum.photos/seed/toolkit/192/192",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://picsum.photos/seed/toolkit/512/512",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

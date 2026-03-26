@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free PDF & Online Tools | ToolKit</title>
+    <meta name="description" content="58 free online tools for PDF, Images, Text, and more. No uploads, everything runs in your browser.">
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- Vanilla JS Tool Modules (Loaded into Global Scope) -->
+    <script src="/js/tools-registry.js"></script>
+    <script src="/js/tools/pdf-tools.js"></script>
+    <script src="/js/tools/image-tools.js"></script>
+    <script src="/js/tools/text-tools.js"></script>
+    <script src="/js/tools/calc-tools.js"></script>
+    <script src="/js/tools/gen-tools.js"></script>
+
+    <!-- React App Entry -->
+    <script type="module" src="/src/main.tsx"></script>
+
+    <script>
+        // PDF.js worker
+        if (window.pdfjsLib) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>
