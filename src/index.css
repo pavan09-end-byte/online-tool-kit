@@ -3,6 +3,13 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --animate-fade-in: fadeIn 0.4s ease-out forwards;
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 }
 
 :root {
@@ -42,23 +49,125 @@ body {
 
 /* Tool UI Overrides to match new theme */
 .tool-ui-card {
-  @apply bg-white rounded-2xl border border-slate-200 p-6 shadow-sm;
+  @apply bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 md:p-6 shadow-sm;
+}
+
+/* Standardized Tool UI Elements */
+.dropzone, .upload-area {
+  @apply w-full min-h-[160px] md:min-h-[200px] border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col items-center justify-center p-6 text-center cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/10;
+}
+
+.dropzone p, .upload-area p {
+  @apply text-slate-500 dark:text-slate-400 text-sm md:text-base mt-2;
+}
+
+.dropzone .icon, .upload-area .icon, .upload-area div[style*="font-size: 3rem"] {
+  @apply text-4xl mb-2;
+}
+
+/* Tool UI Container */
+.tool-process-area {
+  @apply mt-6 space-y-6;
+}
+
+.btn {
+  @apply inline-flex items-center justify-center px-6 py-3 rounded-xl font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none min-h-[44px] text-sm md:text-base;
 }
 
 .btn-primary {
-  @apply bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm active:scale-95;
+  @apply bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20;
 }
 
-.input-field {
-  @apply w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all;
+.btn-outline {
+  @apply border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800;
+}
+
+.btn-sm {
+  @apply px-4 py-2 min-h-[36px] text-xs;
+}
+
+.form-group {
+  @apply mb-4 w-full;
+}
+
+.form-group label {
+  @apply block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5;
+}
+
+.form-control {
+  @apply w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm md:text-base;
+}
+
+.file-list {
+  @apply mt-6 space-y-2 w-full;
+}
+
+.file-item {
+  @apply flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800 text-sm;
+}
+
+.progress-container {
+  @apply mt-6 w-full hidden space-y-2;
+}
+
+.progress-bar {
+  @apply w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden;
+}
+
+.progress-fill {
+  @apply h-full bg-blue-600 transition-all duration-300;
+}
+
+.status-message {
+  @apply text-sm font-medium text-slate-500 dark:text-slate-400 text-center;
+}
+
+/* Success State */
+.success-area {
+  @apply mt-8 p-8 bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-3xl text-center animate-fade-in;
+}
+
+.success-icon {
+  @apply w-16 h-16 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center mx-auto mb-4 text-green-600 dark:text-green-400;
+}
+
+/* Image Comparison Slider */
+.comparison-container {
+  @apply relative w-full aspect-video rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900;
+}
+
+.comparison-image {
+  @apply absolute top-0 left-0 w-full h-full object-contain;
+}
+
+.comparison-overlay {
+  @apply absolute top-0 left-0 h-full overflow-hidden border-r-2 border-white shadow-[2px_0_10px_rgba(0,0,0,0.3)];
+}
+
+.comparison-slider {
+  @apply absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize z-10;
+}
+
+.comparison-handle {
+  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-xl flex items-center justify-center text-slate-900;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .dropzone, .upload-area {
+    @apply min-h-[120px] p-4;
+  }
+  
+  .btn {
+    @apply w-full;
+  }
+  
+  .btn-sm {
+    @apply w-auto;
+  }
 }
 
 /* Bento Grid Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 .animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
+  @apply animate-fade-in;
 }

@@ -1,18 +1,36 @@
 // PDF Tools Logic
 window.PDFTools = {
     // Helper to show progress
-    showProgress: (percent) => {
-        const container = document.querySelector('.progress-container');
-        const fill = document.querySelector('.progress-fill');
-        if (container && fill) {
-            container.style.display = 'block';
-            fill.style.width = `${percent}%`;
+    showProgress: (container, percent, message) => {
+        const pc = container.querySelector('.progress-container');
+        const pf = container.querySelector('.progress-fill');
+        const sm = container.querySelector('.status-message');
+        if (pc && pf) {
+            pc.style.display = 'block';
+            pf.style.width = `${percent}%`;
+            if (sm && message) sm.innerText = message;
         }
     },
 
-    hideProgress: () => {
-        const container = document.querySelector('.progress-container');
-        if (container) container.style.display = 'none';
+    hideProgress: (container) => {
+        const pc = container.querySelector('.progress-container');
+        if (pc) pc.style.display = 'none';
+    },
+
+    showError: (container, message) => {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-sm animate-fade-in';
+        errorDiv.innerHTML = `
+            <div class="flex items-center gap-2">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <span class="font-bold">Error</span>
+            </div>
+            <p class="mt-1">${message}</p>
+        `;
+        // Remove existing errors
+        container.querySelectorAll('.bg-red-50').forEach(el => el.remove());
+        container.appendChild(errorDiv);
+        setTimeout(() => errorDiv.remove(), 5000);
     },
 
     // Helper to download blob
@@ -25,71 +43,174 @@ window.PDFTools = {
         URL.revokeObjectURL(url);
     },
 
+    showSuccess: (container, title, message, downloadFn) => {
+        container.innerHTML = `
+            <div class="success-area">
+                <div class="success-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">${title}</h3>
+                <p class="text-slate-500 dark:text-slate-400 mb-6">${message}</p>
+                <div class="flex flex-col gap-4">
+                    <button class="btn btn-primary py-4 text-lg" id="final-download">Download Result</button>
+                    <button class="btn btn-outline" onclick="location.reload()">Process Another</button>
+                </div>
+                <div class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800 animate-fade-in" style="animation-delay: 2s">
+                    <p class="text-sm text-slate-500 mb-4">Found this useful? Share ToolKit with someone 👇</p>
+                    <div class="flex justify-center gap-3">
+                        <button class="btn btn-sm btn-outline gap-2" onclick="window.open('https://twitter.com/intent/tweet?text=Check out this awesome free tool on ToolKit!&url=' + encodeURIComponent(window.location.href))">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                            Twitter
+                        </button>
+                        <button class="btn btn-sm btn-outline gap-2" onclick="navigator.clipboard.writeText(window.location.href); this.innerText='Copied!'">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                            Copy Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.querySelector('#final-download').onclick = downloadFn;
+    },
+
     // 1. Merge PDF
     renderMergePDF: (container) => {
         container.innerHTML = `
             <div class="dropzone" id="pdf-dropzone">
+                <div class="icon">📚</div>
                 <p>Drag & drop PDF files here or click to select</p>
                 <input type="file" id="pdf-input" accept=".pdf" multiple style="display:none">
             </div>
-            <div class="file-list" id="pdf-file-list"></div>
-            <div class="progress-container">
+            <div class="file-list space-y-2 mb-6" id="pdf-file-list"></div>
+            <div class="progress-container mb-6">
                 <div class="progress-bar"><div class="progress-fill"></div></div>
+                <p class="status-message mt-2 text-center text-sm font-medium text-slate-500"></p>
             </div>
-            <div style="margin-top:24px; text-align:center">
-                <button class="btn btn-primary" id="merge-btn" disabled>Merge All PDFs</button>
+            <div class="tool-process-area">
+                <button class="btn btn-primary py-4" id="merge-btn" disabled>Merge All PDFs</button>
             </div>
+            <div id="result-area"></div>
         `;
 
         const dropzone = container.querySelector('#pdf-dropzone');
         const input = container.querySelector('#pdf-input');
         const fileList = container.querySelector('#pdf-file-list');
         const mergeBtn = container.querySelector('#merge-btn');
+        const resultArea = container.querySelector('#result-area');
         let files = [];
 
         dropzone.onclick = () => input.click();
-        input.onchange = (e) => handleFiles(e.target.files);
+        input.onchange = (e) => handleFiles(Array.from(e.target.files));
 
         function handleFiles(newFiles) {
-            for (let file of newFiles) {
-                files.push(file);
-                const item = document.createElement('div');
-                item.className = 'file-item';
-                item.innerHTML = `
-                    <span>${file.name}</span>
-                    <button class="btn btn-outline btn-sm remove-file" style="padding:4px 8px">✕</button>
+            newFiles.forEach(file => {
+                const id = Math.random().toString(36).substr(2, 9);
+                files.push({ id, file });
+                renderFileList();
+            });
+            mergeBtn.disabled = files.length < 2;
+        }
+
+        function renderFileList() {
+            fileList.innerHTML = '';
+            files.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'file-item flex items-center gap-3 p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl cursor-move transition-all hover:border-blue-500/50';
+                div.draggable = true;
+                div.dataset.id = item.id;
+                
+                div.innerHTML = `
+                    <div class="text-slate-400">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path d="M8 9h8M8 12h8M8 15h8"></path></svg>
+                    </div>
+                    <span class="flex-1 text-sm font-medium truncate">${item.file.name}</span>
+                    <button class="text-slate-400 hover:text-red-500 transition-colors p-1" data-remove="${item.id}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+                    </button>
                 `;
-                item.querySelector('.remove-file').onclick = () => {
-                    files = files.filter(f => f !== file);
-                    item.remove();
+
+                div.querySelector('[data-remove]').onclick = (e) => {
+                    e.stopPropagation();
+                    files = files.filter(f => f.id !== item.id);
+                    renderFileList();
                     mergeBtn.disabled = files.length < 2;
                 };
-                fileList.appendChild(item);
-            }
-            mergeBtn.disabled = files.length < 2;
+
+                // Drag and drop logic
+                div.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', index);
+                    div.classList.add('opacity-50');
+                });
+
+                div.addEventListener('dragend', () => {
+                    div.classList.remove('opacity-50');
+                    fileList.querySelectorAll('.file-item').forEach(el => el.classList.remove('border-blue-500'));
+                });
+
+                div.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    div.classList.add('border-blue-500');
+                });
+
+                div.addEventListener('dragleave', () => {
+                    div.classList.remove('border-blue-500');
+                });
+
+                div.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                    const toIndex = index;
+                    
+                    if (fromIndex !== toIndex) {
+                        const [movedItem] = files.splice(fromIndex, 1);
+                        files.splice(toIndex, 0, movedItem);
+                        renderFileList();
+                    }
+                });
+
+                fileList.appendChild(div);
+            });
         }
 
         mergeBtn.onclick = async () => {
             try {
                 mergeBtn.disabled = true;
-                PDFTools.showProgress(10);
+                
+                PDFTools.showProgress(container, 10, 'Initializing...');
+
                 const mergedPdf = await PDFLib.PDFDocument.create();
                 
                 for (let i = 0; i < files.length; i++) {
-                    const fileData = await files[i].arrayBuffer();
+                    PDFTools.showProgress(container, 10 + Math.round(((i + 1) / files.length) * 80), `Processing ${files[i].file.name}...`);
+                    const fileData = await files[i].file.arrayBuffer();
                     const pdf = await PDFLib.PDFDocument.load(fileData);
                     const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
                     copiedPages.forEach((page) => mergedPdf.addPage(page));
-                    PDFTools.showProgress(10 + (i + 1) / files.length * 80);
                 }
 
+                PDFTools.showProgress(container, 95, 'Finalizing...');
                 const pdfBytes = await mergedPdf.save();
-                PDFTools.downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), 'merged.pdf');
-                PDFTools.showProgress(100);
-                setTimeout(PDFTools.hideProgress, 2000);
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                
+                PDFTools.showProgress(container, 100, 'Complete!');
+
+                setTimeout(() => {
+                    dropzone.style.display = 'none';
+                    fileList.style.display = 'none';
+                    PDFTools.hideProgress(container);
+                    mergeBtn.parentElement.style.display = 'none';
+                    
+                    PDFTools.showSuccess(
+                        resultArea,
+                        'PDFs Merged Successfully!',
+                        `Combined ${files.length} files into one document.`,
+                        () => PDFTools.downloadBlob(blob, 'merged.pdf')
+                    );
+                }, 500);
+
             } catch (err) {
-                alert('Error merging PDFs: ' + err.message);
-            } finally {
+                console.error(err);
+                PDFTools.showError(container, 'Error merging PDFs: ' + err.message);
                 mergeBtn.disabled = false;
             }
         };
@@ -99,11 +220,12 @@ window.PDFTools = {
     renderSplitPDF: (container) => {
         container.innerHTML = `
             <div class="dropzone" id="pdf-dropzone">
+                <div class="icon">✂️</div>
                 <p>Select a PDF to split</p>
                 <input type="file" id="pdf-input" accept=".pdf" style="display:none">
             </div>
-            <div id="split-options" style="display:none; margin-top:24px">
-                <p id="page-info" style="margin-bottom:16px"></p>
+            <div id="split-options" class="tool-process-area" style="display:none">
+                <p id="page-info" class="text-sm font-bold text-slate-500"></p>
                 <div class="form-group">
                     <label>Split Mode</label>
                     <select class="form-control" id="split-mode">
@@ -149,7 +271,7 @@ window.PDFTools = {
         splitBtn.onclick = async () => {
             try {
                 splitBtn.disabled = true;
-                PDFTools.showProgress(20);
+                PDFTools.showProgress(container, 20, 'Loading PDF...');
                 const data = await selectedFile.arrayBuffer();
                 const pdf = await PDFLib.PDFDocument.load(data);
                 const pageCount = pdf.getPageCount();
@@ -157,15 +279,27 @@ window.PDFTools = {
                 if (modeSelect.value === 'all') {
                     const zip = new JSZip();
                     for (let i = 0; i < pageCount; i++) {
+                        PDFTools.showProgress(container, 20 + (i / pageCount) * 70, `Extracting page ${i + 1}...`);
                         const newPdf = await PDFLib.PDFDocument.create();
                         const [page] = await newPdf.copyPages(pdf, [i]);
                         newPdf.addPage(page);
                         const bytes = await newPdf.save();
                         zip.file(`page_${i + 1}.pdf`, bytes);
-                        PDFTools.showProgress(20 + (i / pageCount) * 70);
                     }
+                    PDFTools.showProgress(container, 95, 'Generating ZIP...');
                     const content = await zip.generateAsync({ type: "blob" });
-                    PDFTools.downloadBlob(content, "split_pages.zip");
+                    PDFTools.showProgress(container, 100, 'Complete!');
+                    
+                    setTimeout(() => {
+                        options.style.display = 'none';
+                        PDFTools.hideProgress(container);
+                        PDFTools.showSuccess(
+                            container.querySelector('#result-area') || container,
+                            'PDF Split Complete!',
+                            `Extracted ${pageCount} individual pages into a ZIP file.`,
+                            () => PDFTools.downloadBlob(content, "split_pages.zip")
+                        );
+                    }, 500);
                 } else {
                     const rangeStr = container.querySelector('#pages').value;
                     const indices = [];
@@ -183,18 +317,34 @@ window.PDFTools = {
                         }
                     });
 
-                    if (indices.length === 0) return alert('Please enter a valid page range');
+                    if (indices.length === 0) {
+                        splitBtn.disabled = false;
+                        return PDFTools.showError(container, 'Please enter a valid page range');
+                    }
 
+                    PDFTools.showProgress(container, 60, 'Extracting pages...');
                     const newPdf = await PDFLib.PDFDocument.create();
                     const copiedPages = await newPdf.copyPages(pdf, indices);
                     copiedPages.forEach(p => newPdf.addPage(p));
                     const bytes = await newPdf.save();
-                    PDFTools.downloadBlob(new Blob([bytes], { type: 'application/pdf' }), 'extracted_pages.pdf');
+                    const blob = new Blob([bytes], { type: 'application/pdf' });
+                    
+                    PDFTools.showProgress(container, 100, 'Complete!');
+                    
+                    setTimeout(() => {
+                        options.style.display = 'none';
+                        PDFTools.hideProgress(container);
+                        PDFTools.showSuccess(
+                            container.querySelector('#result-area') || container,
+                            'Extraction Complete!',
+                            `Extracted ${indices.length} pages into a new PDF.`,
+                            () => PDFTools.downloadBlob(blob, "extracted.pdf")
+                        );
+                    }, 500);
                 }
-                PDFTools.showProgress(100);
             } catch (err) {
-                alert('Error: ' + err.message);
-            } finally {
+                console.error(err);
+                PDFTools.showError(container, 'Error: ' + err.message);
                 splitBtn.disabled = false;
             }
         };
@@ -204,23 +354,22 @@ window.PDFTools = {
     renderCompressPDF: (container) => {
         container.innerHTML = `
             <div class="dropzone" id="pdf-dropzone">
-                <p>Select PDF to compress</p>
+                <div class="icon">📉</div>
+                <p>Select a PDF to compress</p>
                 <input type="file" id="pdf-input" accept=".pdf" style="display:none">
             </div>
-            <div id="compress-ui" style="display:none; margin-top:24px">
-                <p id="size-info" style="margin-bottom:16px; font-weight:600"></p>
-                <div class="form-group">
-                    <label>Compression Level</label>
-                    <input type="range" class="form-control" min="1" max="3" value="2" id="level">
-                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:4px">
-                        <span>Low</span><span>Medium</span><span>High</span>
-                    </div>
+            <div id="compress-ui" class="tool-process-area" style="display:none">
+                <div class="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 mb-6">
+                    <p id="size-info" class="text-lg font-bold text-slate-900 dark:text-white mb-1"></p>
+                    <p class="text-sm text-slate-500">We'll optimize internal structures to reduce file size.</p>
                 </div>
-                <button class="btn btn-primary" id="compress-btn" style="width:100%">Compress Now</button>
+                <button class="btn btn-primary py-4" id="compress-btn">Compress & Download</button>
             </div>
-            <div class="progress-container">
+            <div class="progress-container mb-6">
                 <div class="progress-bar"><div class="progress-fill"></div></div>
+                <p class="status-message mt-2 text-center text-sm font-medium text-slate-500"></p>
             </div>
+            <div id="result-area"></div>
         `;
 
         const input = container.querySelector('#pdf-input');
@@ -228,6 +377,7 @@ window.PDFTools = {
         const dropzone = container.querySelector('#pdf-dropzone');
         const sizeInfo = container.querySelector('#size-info');
         const compressBtn = container.querySelector('#compress-btn');
+        const resultArea = container.querySelector('#result-area');
         let selectedFile = null;
 
         dropzone.onclick = () => input.click();
@@ -243,22 +393,31 @@ window.PDFTools = {
         compressBtn.onclick = async () => {
             try {
                 compressBtn.disabled = true;
-                PDFTools.showProgress(30);
+                PDFTools.showProgress(container, 30, 'Analyzing PDF...');
                 const arrayBuffer = await selectedFile.arrayBuffer();
                 const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
                 
+                PDFTools.showProgress(container, 60, 'Optimizing content...');
                 // Simple compression by re-saving with optimization
                 const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
                 const blob = new Blob([pdfBytes], { type: 'application/pdf' });
                 
-                PDFTools.showProgress(100);
-                PDFTools.downloadBlob(blob, 'compressed.pdf');
-                alert(`Compression complete! New size: ${(blob.size / 1024 / 1024).toFixed(2)} MB`);
+                PDFTools.showProgress(container, 100, 'Complete!');
+                
+                setTimeout(() => {
+                    ui.style.display = 'none';
+                    PDFTools.hideProgress(container);
+                    PDFTools.showSuccess(
+                        resultArea,
+                        'Compression Complete!',
+                        `Reduced file size. New size: ${(blob.size / 1024 / 1024).toFixed(2)} MB`,
+                        () => PDFTools.downloadBlob(blob, 'compressed.pdf')
+                    );
+                }, 500);
             } catch (err) {
-                alert('Error: ' + err.message);
-            } finally {
+                console.error(err);
+                PDFTools.showError(container, 'Failed to compress PDF: ' + err.message);
                 compressBtn.disabled = false;
-                setTimeout(PDFTools.hideProgress, 2000);
             }
         };
     },
@@ -266,68 +425,106 @@ window.PDFTools = {
     // 5. Reorder Pages
     renderReorderPDF: (container) => {
         container.innerHTML = `
-            <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer;">
-                <div style="font-size: 3rem; margin-bottom: 16px;">📑</div>
+            <div class="upload-area" id="drop-zone">
+                <div class="icon">📑</div>
                 <p>Select PDF to reorder pages</p>
                 <input type="file" id="file-input" accept=".pdf" hidden>
-                <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">Select PDF</button>
+                <button class="btn btn-primary" id="select-btn">Select PDF</button>
             </div>
-            <div id="process-area" style="display:none; margin-top:24px">
+            <div id="process-area" class="tool-process-area" style="display:none">
                 <div class="form-group">
-                    <label>New Page Order (comma separated, e.g. 3,1,2)</label>
+                    <label class="block text-sm font-medium mb-2">New Page Order (comma separated)</label>
                     <input type="text" class="form-control" id="order" placeholder="e.g. 3,1,2">
-                    <small id="page-count-info"></small>
+                    <small id="page-count-info" class="text-xs text-slate-400 mt-2 block"></small>
                 </div>
-                <button class="btn btn-primary" id="reorder-btn" style="width:100%">Reorder & Download</button>
+                <button class="btn btn-primary py-4" id="reorder-btn">Reorder & Download</button>
             </div>
+            <div class="progress-container mb-6">
+                <div class="progress-bar"><div class="progress-fill"></div></div>
+                <p class="status-message mt-2 text-center text-sm font-medium text-slate-500"></p>
+            </div>
+            <div id="result-area"></div>
         `;
 
         const input = container.querySelector('#file-input');
+        const selectBtn = container.querySelector('#select-btn');
         const area = container.querySelector('#process-area');
         const orderInput = container.querySelector('#order');
         const info = container.querySelector('#page-count-info');
+        const reorderBtn = container.querySelector('#reorder-btn');
+        const resultArea = container.querySelector('#result-area');
         let pdfFile = null;
         let pageCount = 0;
 
+        selectBtn.onclick = () => input.click();
+
         input.onchange = async (e) => {
-            pdfFile = e.target.files[0];
-            if (pdfFile) {
-                const data = await pdfFile.arrayBuffer();
-                const pdf = await PDFLib.PDFDocument.load(data);
-                pageCount = pdf.getPageCount();
-                info.innerText = `Total pages: ${pageCount}. Enter indices from 1 to ${pageCount}.`;
-                area.style.display = 'block';
-                container.querySelector('#drop-zone').style.display = 'none';
+            try {
+                pdfFile = e.target.files[0];
+                if (pdfFile) {
+                    PDFTools.showProgress(container, 50, 'Loading PDF...');
+                    const data = await pdfFile.arrayBuffer();
+                    const pdf = await PDFLib.PDFDocument.load(data);
+                    pageCount = pdf.getPageCount();
+                    info.innerText = `Total pages: ${pageCount}. Enter indices from 1 to ${pageCount} in the order you want them.`;
+                    area.style.display = 'block';
+                    container.querySelector('#drop-zone').style.display = 'none';
+                    PDFTools.hideProgress(container);
+                }
+            } catch (err) {
+                PDFTools.showError(container, 'Failed to load PDF: ' + err.message);
             }
         };
 
-        container.querySelector('#reorder-btn').onclick = async () => {
-            const order = orderInput.value.split(',').map(s => parseInt(s.trim()) - 1);
-            if (order.some(n => isNaN(n) || n < 0 || n >= pageCount)) {
-                return alert('Invalid page order. Please use numbers within range.');
-            }
+        reorderBtn.onclick = async () => {
+            try {
+                const order = orderInput.value.split(',').map(s => parseInt(s.trim()) - 1);
+                if (order.some(n => isNaN(n) || n < 0 || n >= pageCount)) {
+                    return PDFTools.showError(container, 'Invalid page order. Please use numbers within range.');
+                }
 
-            const data = await pdfFile.arrayBuffer();
-            const pdf = await PDFLib.PDFDocument.load(data);
-            const newPdf = await PDFLib.PDFDocument.create();
-            const pages = await newPdf.copyPages(pdf, order);
-            pages.forEach(p => newPdf.addPage(p));
-            
-            const bytes = await newPdf.save();
-            PDFTools.downloadBlob(new Blob([bytes]), 'reordered.pdf');
+                reorderBtn.disabled = true;
+                PDFTools.showProgress(container, 40, 'Reordering pages...');
+                
+                const data = await pdfFile.arrayBuffer();
+                const pdf = await PDFLib.PDFDocument.load(data);
+                const newPdf = await PDFLib.PDFDocument.create();
+                const pages = await newPdf.copyPages(pdf, order);
+                pages.forEach(p => newPdf.addPage(p));
+                
+                PDFTools.showProgress(container, 80, 'Saving...');
+                const bytes = await newPdf.save();
+                const blob = new Blob([bytes], { type: 'application/pdf' });
+                
+                PDFTools.showProgress(container, 100, 'Complete!');
+                
+                setTimeout(() => {
+                    area.style.display = 'none';
+                    PDFTools.hideProgress(container);
+                    PDFTools.showSuccess(
+                        resultArea,
+                        'PDF Reordered!',
+                        `Created a new PDF with ${order.length} pages in your specified order.`,
+                        () => PDFTools.downloadBlob(blob, 'reordered.pdf')
+                    );
+                }, 500);
+            } catch (err) {
+                PDFTools.showError(container, 'Error: ' + err.message);
+                reorderBtn.disabled = false;
+            }
         };
     },
 
     // 6. Rotate PDF
     renderRotatePDF: (container) => {
         container.innerHTML = `
-            <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer;">
-                <div style="font-size: 3rem; margin-bottom: 16px;">🔄</div>
+            <div class="upload-area" id="drop-zone">
+                <div class="icon">🔄</div>
                 <p>Drag & drop PDF to rotate pages</p>
                 <input type="file" id="file-input" accept=".pdf" hidden>
                 <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">Select PDF</button>
             </div>
-            <div id="process-area" style="display:none; margin-top:24px">
+            <div id="process-area" class="tool-process-area" style="display:none">
                 <div class="form-group">
                     <label>Rotation Angle</label>
                     <select class="form-control" id="angle">
@@ -336,7 +533,7 @@ window.PDFTools = {
                         <option value="270">90° Counter-Clockwise</option>
                     </select>
                 </div>
-                <button class="btn btn-primary" id="rotate-btn" style="width:100%">Rotate & Download</button>
+                <button class="btn btn-primary" id="rotate-btn">Rotate & Download</button>
             </div>
         `;
 
@@ -371,13 +568,13 @@ window.PDFTools = {
     // 7. Page Numbers
     renderPageNumbersPDF: (container) => {
         container.innerHTML = `
-            <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer;">
-                <div style="font-size: 3rem; margin-bottom: 16px;">🔢</div>
+            <div class="upload-area" id="drop-zone">
+                <div class="icon">🔢</div>
                 <p>Select PDF to add page numbers</p>
                 <input type="file" id="file-input" accept=".pdf" hidden>
                 <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">Select PDF</button>
             </div>
-            <div id="process-area" style="display:none; margin-top:24px">
+            <div id="process-area" class="tool-process-area" style="display:none">
                 <div class="form-group">
                     <label>Position</label>
                     <select class="form-control" id="pos">
@@ -386,7 +583,7 @@ window.PDFTools = {
                         <option value="top-center">Top Center</option>
                     </select>
                 </div>
-                <button class="btn btn-primary" id="process-btn" style="width:100%">Add Numbers & Download</button>
+                <button class="btn btn-primary" id="process-btn">Add Numbers & Download</button>
             </div>
         `;
 
@@ -427,18 +624,18 @@ window.PDFTools = {
     // 8. Watermark PDF
     renderWatermarkPDF: (container) => {
         container.innerHTML = `
-            <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer;">
-                <div style="font-size: 3rem; margin-bottom: 16px;">🏷️</div>
+            <div class="upload-area" id="drop-zone">
+                <div class="icon">🏷️</div>
                 <p>Select PDF to add watermark</p>
                 <input type="file" id="file-input" accept=".pdf" hidden>
                 <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">Select PDF</button>
             </div>
-            <div id="process-area" style="display:none; margin-top:24px">
+            <div id="process-area" class="tool-process-area" style="display:none">
                 <div class="form-group">
                     <label>Watermark Text</label>
                     <input type="text" class="form-control" id="text" value="CONFIDENTIAL">
                 </div>
-                <button class="btn btn-primary" id="process-btn" style="width:100%">Add Watermark & Download</button>
+                <button class="btn btn-primary" id="process-btn">Add Watermark & Download</button>
             </div>
         `;
 
@@ -482,18 +679,18 @@ window.PDFTools = {
     // 9. Unlock PDF
     renderUnlockPDF: (container) => {
         container.innerHTML = `
-            <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer;">
-                <div style="font-size: 3rem; margin-bottom: 16px;">🔓</div>
+            <div class="upload-area" id="drop-zone">
+                <div class="icon">🔓</div>
                 <p>Select protected PDF to unlock</p>
                 <input type="file" id="file-input" accept=".pdf" hidden>
                 <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">Select PDF</button>
             </div>
-            <div id="process-area" style="display:none; margin-top:24px">
+            <div id="process-area" class="tool-process-area" style="display:none">
                 <div class="form-group">
                     <label>Password</label>
                     <input type="password" class="form-control" id="pass" placeholder="Enter PDF password">
                 </div>
-                <button class="btn btn-primary" id="process-btn" style="width:100%">Unlock & Download</button>
+                <button class="btn btn-primary" id="process-btn">Unlock & Download</button>
             </div>
         `;
 
@@ -525,15 +722,15 @@ window.PDFTools = {
     // 13. PDF Info
     renderPDFInfo: (container) => {
         container.innerHTML = `
-            <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer;">
-                <div style="font-size: 3rem; margin-bottom: 16px;">ℹ️</div>
+            <div class="upload-area" id="drop-zone">
+                <div class="icon">ℹ️</div>
                 <p>Select PDF to view info</p>
                 <input type="file" id="file-input" accept=".pdf" hidden>
                 <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">Select PDF</button>
             </div>
-            <div id="process-area" style="display:none; margin-top:24px">
-                <div class="info-grid" style="display:grid; gap:12px; background:var(--bg); padding:20px; border-radius:8px">
-                    <div id="info-content"></div>
+            <div id="process-area" class="tool-process-area" style="display:none">
+                <div class="info-grid bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800">
+                    <div id="info-content" class="space-y-3"></div>
                 </div>
             </div>
         `;
@@ -572,18 +769,18 @@ window.PDFTools = {
     // 8. Protect PDF
     renderProtectPDF: (container) => {
         container.innerHTML = `
-            <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer;">
-                <div style="font-size: 3rem; margin-bottom: 16px;">🔒</div>
+            <div class="upload-area" id="drop-zone">
+                <div class="icon">🔒</div>
                 <p>Drag & drop PDF to add password</p>
                 <input type="file" id="file-input" accept=".pdf" hidden>
                 <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">Select PDF</button>
             </div>
-            <div id="process-area" style="display:none; margin-top:24px">
+            <div id="process-area" class="tool-process-area" style="display:none">
                 <div class="form-group">
                     <label>Set Password</label>
                     <input type="password" class="form-control" id="pass" placeholder="Enter password">
                 </div>
-                <button class="btn btn-primary" id="protect-btn" style="width:100%">Protect & Download</button>
+                <button class="btn btn-primary" id="protect-btn">Protect & Download</button>
             </div>
         `;
 
@@ -616,10 +813,11 @@ window.PDFTools = {
     renderPDFToImages: (container) => {
         container.innerHTML = `
             <div class="dropzone" id="pdf-dropzone">
+                <div class="icon">🖼️</div>
                 <p>Select PDF to convert to images</p>
                 <input type="file" id="pdf-input" accept=".pdf" style="display:none">
             </div>
-            <div id="pdf-to-img-ui" style="display:none; margin-top:24px">
+            <div id="pdf-to-img-ui" class="tool-process-area" style="display:none">
                 <div class="form-group">
                     <label>Format</label>
                     <select class="form-control" id="img-format">
@@ -685,11 +883,14 @@ window.PDFTools = {
     renderImagesToPDF: (container) => {
         container.innerHTML = `
             <div class="dropzone" id="img-dropzone">
+                <div class="icon">📸</div>
                 <p>Select images to convert to PDF</p>
                 <input type="file" id="img-input" accept="image/*" multiple style="display:none">
             </div>
             <div class="file-list" id="img-list"></div>
-            <button class="btn btn-primary" id="convert-btn" disabled style="margin-top:24px">Create PDF</button>
+            <div class="tool-process-area">
+                <button class="btn btn-primary" id="convert-btn" disabled>Create PDF</button>
+            </div>
         `;
 
         const input = container.querySelector('#img-input');
@@ -732,15 +933,15 @@ window.PDFTools = {
     // 12. Extract Text PDF
     renderExtractTextPDF: (container) => {
         container.innerHTML = `
-            <div class="upload-area" id="drop-zone" style="border: 2px dashed var(--border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer;">
-                <div style="font-size: 3rem; margin-bottom: 16px;">📄</div>
+            <div class="upload-area" id="drop-zone">
+                <div class="icon">📄</div>
                 <p>Select PDF to extract text</p>
                 <input type="file" id="file-input" accept=".pdf" hidden>
                 <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">Select PDF</button>
             </div>
-            <div id="process-area" style="display:none; margin-top:24px">
-                <button class="btn btn-primary" id="extract-btn" style="width:100%">Extract Text</button>
-                <textarea class="form-control" id="output" rows="10" style="margin-top:16px" readonly></textarea>
+            <div id="process-area" class="tool-process-area" style="display:none">
+                <button class="btn btn-primary" id="extract-btn">Extract Text</button>
+                <textarea class="form-control" id="output" rows="10" readonly></textarea>
             </div>
         `;
 

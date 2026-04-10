@@ -1,56 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Student Toolkit – 58 Free Tools for academics, productivity, converters, and everyday utility needs." />
-  <meta name="keywords" content="student toolkit, cgpa calculator, attendance calculator, study planner, free tools" />
-  <meta name="author" content="Student Toolkit" />
-  <title>Student Toolkit – 58 Free Tools</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToolKit — 58 Free Online Tools | 100% Private & Free</title>
+    <meta name="description" content="Compress PDFs, resize images, generate text and more — all free, all private, no uploads to any server.">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ais-pre-ftiirnldzlct2iicr722iv-121831210915.asia-southeast1.run.app/">
+    <meta property="og:title" content="ToolKit — 58 Free Online Tools | 100% Private & Free">
+    <meta property="og:description" content="Compress PDFs, resize images, generate text and more — all free, all private, no uploads to any server.">
+    <meta property="og:image" content="https://picsum.photos/seed/toolkit-tools/1200/630">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://ais-pre-ftiirnldzlct2iicr722iv-121831210915.asia-southeast1.run.app/">
+    <meta property="twitter:title" content="ToolKit — 58 Free Online Tools | 100% Private & Free">
+    <meta property="twitter:description" content="Compress PDFs, resize images, generate text and more — all free, all private, no uploads to any server.">
+    <meta property="twitter:image" content="https://picsum.photos/seed/toolkit-tools/1200/630">
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="https://picsum.photos/seed/toolkit/32/32">
+    <meta name="theme-color" content="#2563eb">
+
+    <!-- Google AdSense Placeholder -->
+    <!-- Replace 'ca-pub-XXXXXXXXXXXXXXXX' with your actual AdSense Publisher ID -->
+    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+
+    <!-- Google Analytics Placeholder -->
+    <!-- Replace 'G-XXXXXXXXXX' with your actual Measurement ID -->
+    <!-- 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script> 
+    -->
 </head>
 <body>
-  <header class="topbar">
-    <div class="logo">🎓 Student Toolkit</div>
-    <nav>
-      <a href="#home">Home</a>
-      <a href="#tools">Tools</a>
-    </nav>
-    <button id="darkToggle" class="btn ghost" aria-label="Toggle dark mode">🌙</button>
-  </header>
+    <div id="root"></div>
 
-  <main id="home">
-    <section class="hero">
-      <h1>Free Student Tools – Fast &amp; Simple</h1>
-      <p>All tools you need in one place.</p>
-    </section>
+    <!-- Vanilla JS Tool Modules (Loaded into Global Scope) -->
+    <script src="/js/tools-registry.js"></script>
+    <script src="/js/tools/pdf-tools.js"></script>
+    <script src="/js/tools/image-tools.js"></script>
+    <script src="/js/tools/text-tools.js"></script>
+    <script src="/js/tools/calc-tools.js"></script>
+    <script src="/js/tools/gen-tools.js"></script>
 
-    <section class="ad-slot">Ad Space (Top Banner - AdSense Ready)</section>
+    <!-- React App Entry -->
+    <script type="module" src="/src/main.tsx"></script>
 
-    <section class="toolbar" id="tools">
-      <input id="searchInput" type="search" placeholder="Search tools..." />
-      <div class="filters" id="filterButtons"></div>
-    </section>
-
-    <section class="tools-grid" id="toolsGrid"></section>
-
-    <section class="ad-slot">Ad Space (Between Tools - AdSense Ready)</section>
-  </main>
-
-  <aside id="toolPanel" class="panel hidden" aria-live="polite">
-    <div class="panel-content">
-      <div class="panel-head">
-        <h2 id="panelTitle"></h2>
-        <button id="closePanel" class="btn ghost">✕</button>
-      </div>
-      <div id="panelBody"></div>
-    </div>
-  </aside>
-
-  <footer>
-    <small>© 2026 Student Toolkit — Fully static, privacy-friendly web app.</small>
-  </footer>
-
-  <script src="script.js"></script>
+    <script>
+        // PDF.js worker
+        if (window.pdfjsLib) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+    </script>
 </body>
 </html>

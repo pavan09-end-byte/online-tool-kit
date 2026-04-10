@@ -1,57 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.yoursite.com/</loc>
-    <lastmod>2026-03-01</lastmod>
+    <loc>https://www.yourdomain.com/</loc>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.yoursite.com/cgpa-calculator.html</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.yoursite.com/image-compressor.html</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.yoursite.com/jpg-to-png.html</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.yoursite.com/percentage-calculator.html</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.yoursite.com/word-counter.html</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.yoursite.com/about.html</loc>
-    <lastmod>2026-03-01</lastmod>
+    <loc>https://www.yourdomain.com/?view=about</loc>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.yoursite.com/contact.html</loc>
-    <lastmod>2026-03-01</lastmod>
+    <loc>https://www.yourdomain.com/?view=privacy</loc>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.yoursite.com/privacy-policy.html</loc>
-    <lastmod>2026-03-01</lastmod>
+    <loc>https://www.yourdomain.com/?view=terms</loc>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+  <url>
+    <loc>https://www.yourdomain.com/?view=contact</loc>
+    <lastmod>2026-04-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <!-- PDF Tools -->
+  <url><loc>https://www.yourdomain.com/?tool=merge-pdf</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=split-pdf</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=compress-pdf</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=rotate-pdf</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=reorder-pdf</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=page-numbers-pdf</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=watermark-pdf</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=protect-pdf</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=unlock-pdf</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=pdf-to-images</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=images-to-pdf</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=extract-text-pdf</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=pdf-info</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=pdf-to-jpg</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=image-to-pdf</loc><priority>0.8</priority></url>
+  <!-- Image Tools -->
+  <url><loc>https://www.yourdomain.com/?tool=jpg-to-png</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=png-to-jpg</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=webp-to-image</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=compress-image</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=resize-image</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=crop-image</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=image-to-base64</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=base64-to-image</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=grayscale-image</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=flip-rotate-image</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=social-resizer</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=add-text-to-image</loc><priority>0.8</priority></url>
+  <!-- Text Tools -->
+  <url><loc>https://www.yourdomain.com/?tool=word-counter</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=case-converter</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=text-to-slug</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=lorem-ipsum</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=duplicate-remover</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=text-reverser</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=char-frequency</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=docx-viewer</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=xlsx-viewer</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=text-diff</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=json-formatter</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=html-enc-dec</loc><priority>0.8</priority></url>
+  <!-- Calculator Tools -->
+  <url><loc>https://www.yourdomain.com/?tool=perc-calc</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=cgpa-calc</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=age-calc</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=bmi-calc</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=emi-calc</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=gst-calc</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=discount-calc</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=unit-conv</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=sip-calc</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=fd-calc</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=cgpa-to-perc</loc><priority>0.8</priority></url>
+  <!-- Generator Tools -->
+  <url><loc>https://www.yourdomain.com/?tool=pass-gen</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=qr-gen</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=color-picker</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=random-num</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=uuid-gen</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=num-to-words</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=favicon-gen</loc><priority>0.8</priority></url>
+  <url><loc>https://www.yourdomain.com/?tool=invoice-gen</loc><priority>0.8</priority></url>
 </urlset>
